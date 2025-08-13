@@ -1,0 +1,36 @@
+{
+  "name": "tigo-rag-frontend",
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*\\.(js|css|ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot))",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_APP_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "VITE_API_URL": "@tigo_api_url",
+      "VITE_JWT_SECRET": "@tigo_jwt_secret",
+      "VITE_APP_ENV": "production",
+      "VITE_DEBUG": "false"
+    }
+  }
+}
