@@ -12,6 +12,7 @@ import ConceptForm from '../Campaign/ConceptForm';
 import ArchetypeSelector from '../Campaign/ArchetypeSelector';
 import SegmentReactions from '../Campaign/SegmentReactions';
 import PersonaSettings from '../Campaign/PersonaSettings';
+import { PersonaVariableConfig } from '../Campaign/PersonaVariableConfig';
 import FocusGroupSimulator from '../Personas/FocusGroupSimulator';
 import EvaluationSummary from '../Campaign/EvaluationSummary';
 import HumanArchetypeChat from '../Campaign/HumanArchetypeChat';

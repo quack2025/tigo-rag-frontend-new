@@ -62,7 +62,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ className }) => {
             <Shield className="h-8 w-8 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Tigo RAG System
+            RAG System
           </h2>
           <p className="text-gray-600">
             Sistema de análisis de mercado con IA
@@ -182,7 +182,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ className }) => {
 
         {/* Footer */}
         <div className="text-center text-sm text-gray-500">
-          <p>Tigo Honduras - Sistema RAG v1.0</p>
+          <p>Sistema RAG v1.0</p>
           <p className="mt-1">Solo personal autorizado</p>
         </div>
       </div>
