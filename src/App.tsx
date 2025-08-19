@@ -48,17 +48,17 @@ const App: React.FC = () => {
 
   useEffect(() => {
     // Log de inicialización
-    console.log('🚀 Tigo RAG Frontend iniciado');
+    console.log('🚀 RAG Frontend iniciado');
     console.log('🔐 Usuario autenticado:', isAuthenticated());
     
     // Configurar título de la página
-    document.title = 'Tigo RAG System';
+    document.title = 'RAG System';
     
     // Agregar clase al body para estilos globales
-    document.body.classList.add('tigo-rag-app');
+    document.body.classList.add('rag-app');
     
     return () => {
-      document.body.classList.remove('tigo-rag-app');
+      document.body.classList.remove('rag-app');
     };
   }, [isAuthenticated]);
 

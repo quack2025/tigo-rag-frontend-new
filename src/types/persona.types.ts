@@ -57,33 +57,33 @@ export interface PersonaCharacteristics {
     self_direction_values: number;
   };
 
-  // Telecom-Specific (25)
-  telecom: {
-    monthly_spend: number; // in Lempiras
-    plan_type: 'prepaid' | 'postpaid' | 'hybrid';
-    data_usage_gb: number;
-    voice_minutes: number;
-    sms_frequency: 'never' | 'rarely' | 'sometimes' | 'often' | 'always';
-    device_brand: string;
-    device_age: number; // in months
-    upgrade_frequency: number; // months between upgrades
-    network_quality_importance: number; // 0-100
-    customer_service_experience: 'very_poor' | 'poor' | 'neutral' | 'good' | 'excellent';
-    bundling_preferences: string[];
-    payment_method: 'cash' | 'card' | 'bank_transfer' | 'mobile_money' | 'other';
-    bill_payment_timing: 'early' | 'on_time' | 'late' | 'very_late';
-    roaming_usage: 'never' | 'rarely' | 'sometimes' | 'often';
-    family_plan_status: boolean;
-    loyalty_program_engagement: 'none' | 'low' | 'medium' | 'high';
-    complaint_frequency: number; // per year
-    switching_consideration: number; // 0-100 likelihood
-    referral_behavior: 'detractor' | 'passive' | 'promoter';
-    feature_usage_priority: string[];
-    data_sharing_behavior: 'never' | 'family' | 'friends' | 'anyone';
-    wifi_dependency: number; // 0-100
-    mobile_banking_usage: boolean;
-    streaming_habits: string[];
-    gaming_mobile_usage: 'none' | 'casual' | 'regular' | 'heavy';
+  // FMCG-Specific (25)
+  fmcg: {
+    monthly_fmcg_spend: number; // in pesos
+    shopping_frequency: 'daily' | 'few_times_week' | 'weekly' | 'biweekly' | 'monthly';
+    primary_shopping_channel: 'supermarket' | 'convenience_store' | 'traditional_market' | 'online' | 'warehouse_club';
+    secondary_shopping_channels: string[];
+    brand_loyalty_level: 'very_high' | 'high' | 'medium' | 'low' | 'very_low';
+    price_sensitivity: 'very_high' | 'high' | 'medium' | 'low' | 'very_low';
+    promotion_responsiveness: number; // 0-100
+    bulk_buying_behavior: 'never' | 'sometimes' | 'often' | 'always';
+    private_label_acceptance: 'never' | 'some_categories' | 'many_categories' | 'all_categories';
+    organic_natural_preference: number; // 0-100
+    health_consciousness: number; // 0-100
+    convenience_importance: number; // 0-100
+    packaging_influence: number; // 0-100
+    social_media_influence: number; // 0-100
+    influencer_trust_level: number; // 0-100
+    innovation_adoption: 'laggard' | 'late_majority' | 'early_majority' | 'early_adopter' | 'innovator';
+    eco_sustainability_concern: number; // 0-100
+    local_brand_preference: number; // 0-100
+    quality_vs_price_priority: 'price_first' | 'balanced' | 'quality_first';
+    shopping_planning_style: 'impulse' | 'mixed' | 'planned';
+    family_decision_influence: 'individual' | 'spouse_shared' | 'family_consensus' | 'others_decide';
+    category_expertise: string[]; // categories they know well
+    payment_preference: 'cash' | 'debit_card' | 'credit_card' | 'digital_wallet' | 'mixed';
+    online_grocery_adoption: 'never' | 'tried_once' | 'occasional' | 'regular' | 'primary';
+    stockpiling_tendency: number; // 0-100
   };
 
   // Honduras Sociocultural (15)
@@ -219,11 +219,14 @@ export const ARCHETYPE_TEMPLATES: Record<TigoArchetype, Partial<PersonaCharacter
       achievement_orientation: 90,
       time_orientation: 'future',
     } as any,
-    telecom: {
-      plan_type: 'postpaid',
-      monthly_spend: 1500,
-      network_quality_importance: 95,
-      device_brand: 'iPhone',
+    fmcg: {
+      monthly_fmcg_spend: 25000,
+      shopping_frequency: 'weekly',
+      primary_shopping_channel: 'supermarket',
+      brand_loyalty_level: 'high',
+      price_sensitivity: 'medium',
+      innovation_adoption: 'early_adopter',
+      quality_vs_price_priority: 'quality_first',
     } as any,
   },
   
@@ -243,11 +246,14 @@ export const ARCHETYPE_TEMPLATES: Record<TigoArchetype, Partial<PersonaCharacter
       security_values: 85,
       tradition_values: 75,
     } as any,
-    telecom: {
-      plan_type: 'postpaid',
-      monthly_spend: 800,
-      family_plan_status: true,
-      bill_payment_timing: 'on_time',
+    fmcg: {
+      monthly_fmcg_spend: 18000,
+      shopping_frequency: 'weekly',
+      primary_shopping_channel: 'supermarket',
+      brand_loyalty_level: 'very_high',
+      price_sensitivity: 'high',
+      shopping_planning_style: 'planned',
+      quality_vs_price_priority: 'balanced',
     } as any,
   },
   
@@ -266,11 +272,14 @@ export const ARCHETYPE_TEMPLATES: Record<TigoArchetype, Partial<PersonaCharacter
       self_direction_values: 80,
       innovation_adoption: 'early_majority',
     } as any,
-    telecom: {
-      plan_type: 'hybrid',
-      monthly_spend: 600,
-      data_usage_gb: 15,
-      mobile_banking_usage: true,
+    fmcg: {
+      monthly_fmcg_spend: 15000,
+      shopping_frequency: 'biweekly',
+      primary_shopping_channel: 'convenience_store',
+      brand_loyalty_level: 'medium',
+      price_sensitivity: 'medium',
+      innovation_adoption: 'early_majority',
+      shopping_planning_style: 'mixed',
     } as any,
   },
   
@@ -289,7 +298,7 @@ export const ARCHETYPE_TEMPLATES: Record<TigoArchetype, Partial<PersonaCharacter
       hedonism_values: 75,
       innovation_adoption: 'innovator',
     } as any,
-    telecom: {
+    fmcg: {
       plan_type: 'postpaid',
       data_usage_gb: 30,
       streaming_habits: ['Netflix', 'Spotify', 'TikTok', 'Instagram'],
@@ -310,7 +319,7 @@ export const ARCHETYPE_TEMPLATES: Record<TigoArchetype, Partial<PersonaCharacter
       convenience_preference: 75,
       decision_making_style: 'rational',
     } as any,
-    telecom: {
+    fmcg: {
       plan_type: 'prepaid',
       monthly_spend: 400,
       wifi_dependency: 70,
@@ -331,7 +340,7 @@ export const ARCHETYPE_TEMPLATES: Record<TigoArchetype, Partial<PersonaCharacter
       tradition_values: 85,
       innovation_adoption: 'laggard',
     } as any,
-    telecom: {
+    fmcg: {
       plan_type: 'prepaid',
       monthly_spend: 200,
       device_age: 36,

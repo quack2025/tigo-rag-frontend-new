@@ -210,9 +210,9 @@ export class AuthenticConversationEngine {
     let improvementSuggestion = '';
 
     if (archetype === TigoArchetype.CONTROLADOR) {
-      reactionText = `${this.getRandomExpression(languagePatterns.formal_expressions)}, L${price.toLocaleString()} mensuales... déjeme hacer cuentas. Eso son L${(price * 12).toLocaleString()} al año, y con mi ingreso familiar de unos L${averageIncome.toLocaleString()} mensuales, serían como ${pricePercentage.toFixed(1)}% de nuestros ingresos solo en internet.
+      reactionText = `${this.getRandomExpression(languagePatterns.formal_expressions)}, ${price.toLocaleString()} mensuales... déjeme hacer cuentas. Eso son ${(price * 12).toLocaleString()} al año, y con mi ingreso familiar de unos ${averageIncome.toLocaleString()} mensuales, serían como ${pricePercentage.toFixed(1)}% de nuestros ingresos solo en internet.
 
-      Actualmente gasto unos L${currentSpendAvg.toLocaleString()} en Tigo, entonces esto sería un aumento de ${priceIncrease > 0 ? `${priceIncrease.toFixed(0)}%` : 'prácticamente igual'}. ${this.getRandomExpression(languagePatterns.price_related)} Para una familia como la nuestra, cada lempira cuenta.
+      Actualmente gasto unos ${currentSpendAvg.toLocaleString()} en Tigo, entonces esto sería un aumento de ${priceIncrease > 0 ? `${priceIncrease.toFixed(0)}%` : 'prácticamente igual'}. ${this.getRandomExpression(languagePatterns.price_related)} Para una familia como la nuestra, cada peso cuenta.
 
       ${priceIncrease > 50 ? 
         `${this.getRandomExpression(languagePatterns.skepticism_expressions)} ¿Realmente vale la pena ese aumento? Necesito ver beneficios muy claros que justifiquen gastar tanto más. Con ese dinero extra podría comprar útiles escolares para los muchachos o ahorrar para emergencias.` :
