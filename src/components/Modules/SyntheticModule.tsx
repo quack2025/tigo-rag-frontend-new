@@ -11,14 +11,14 @@ import { cn } from '../../lib/utils';
 import ConceptForm from '../Campaign/ConceptForm';
 import ArchetypeSelector from '../Campaign/ArchetypeSelector';
 import SegmentReactions from '../Campaign/SegmentReactions';
-import PersonaSettings from '../Campaign/PersonaSettings';
+import TigoPersonaSettings from '../Campaign/TigoPersonaSettings';
 import FocusGroupSimulator from '../Personas/FocusGroupSimulator';
 import EvaluationSummary from '../Campaign/EvaluationSummary';
 import HumanArchetypeChat from '../Campaign/HumanArchetypeChat';
 import { CampaignEvaluator } from '../../utils/campaignEvaluator';
 import type { CampaignConcept, EvaluationSession, SegmentReaction } from '../../types/campaign.types';
-import type { SyntheticPersona } from '../../types/persona.types';
-import { TigoArchetype } from '../../types/persona.types';
+import type { SyntheticPersona } from '../../types/tigoPersona.types';
+import { TigoArchetype } from '../../types/tigoPersona.types';
 
 type ViewState = 'welcome' | 'concept_form' | 'archetype_selector' | 'evaluating' | 'results';
 
@@ -235,16 +235,41 @@ const SyntheticModule: React.FC = () => {
               onClick={() => {
                 console.log('🎯 Focus Group button clicked', { hasSession: !!currentSession, reactionsCount: currentSession?.reactions?.length });
                 if (currentSession) {
-                  // Usar los arquetipos de la evaluación actual
-                  const focusGroupPersonas = currentSession.reactions.map(reaction => ({
+                  // Crear personas sintéticas compatibles para el focus group
+                  const focusGroupPersonas: SyntheticPersona[] = currentSession.reactions.map(reaction => ({
                     id: reaction.archetype,
                     name: reaction.persona_context.name,
-                    age: reaction.persona_context.age,
-                    location: reaction.persona_context.city,
-                    segment: reaction.archetype,
-                    personality_traits: [reaction.persona_context.personality],
-                    evaluation_context: reaction, // Incluir contexto de evaluación
-                    concept: currentSession.concept // Incluir el concepto evaluado
+                    archetype: reaction.archetype as any, // TigoArchetype
+                    characteristics: {
+                      demographics: {
+                        age: reaction.persona_context.age,
+                        gender: 'male',
+                        nse: 'C',
+                        monthly_income: 12000,
+                        education_level: 'Secundaria',
+                        occupation: reaction.persona_context.occupation,
+                        family_status: 'Soltero',
+                        current_telecom_spend: 800
+                      },
+                      location: {
+                        city: reaction.persona_context.city,
+                        neighborhood: 'Centro',
+                        region: 'Región Central'
+                      },
+                      psychographics: {
+                        lifestyle: 'Vida normal',
+                        values: ['Familia'],
+                        motivations: ['Estabilidad'],
+                        main_concerns: reaction.concerns || ['Precio'],
+                        price_sensitivity: 'Alta',
+                        tech_adoption: 'Básico',
+                        preferred_channels: ['Punto de venta']
+                      }
+                    },
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                    created_by: 'system',
+                    is_active: true
                   }));
                   console.log('👥 Setting focus group personas:', focusGroupPersonas.length, focusGroupPersonas);
                   setFocusGroupPersonas(focusGroupPersonas);
@@ -593,8 +618,8 @@ const SyntheticModule: React.FC = () => {
         )}
       </div>
 
-      {/* Settings Modal */}
-      <PersonaSettings
+      {/* Settings Modal - TIGO Honduras Specific */}
+      <TigoPersonaSettings
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
         onSave={() => {

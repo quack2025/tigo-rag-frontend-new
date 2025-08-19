@@ -9,6 +9,8 @@ import { cn } from '../../lib/utils';
 import type { SegmentReaction } from '../../types/campaign.types';
 import { LANGUAGE_PATTERNS } from '../../data/hondurasKnowledgeBase';
 import { llmChatService } from '../../services/llmChatService';
+import { tigoLLMService } from '../../services/tigoLLMService';
+import type { SyntheticPersona } from '../../types/tigoPersona.types';
 
 interface ChatMessage {
   id: string;
@@ -58,10 +60,22 @@ const HumanArchetypeChat: React.FC<HumanArchetypeChatProps> = ({
   }, [isOpen]);
 
   const checkBackendHealth = async () => {
-    const isHealthy = await llmChatService.checkBackendHealth();
+    // Verificar primero el nuevo servicio de TIGO
+    const tigoHealthy = await tigoLLMService.checkBackendHealth();
+    let fallbackHealthy = false;
+    
+    if (!tigoHealthy) {
+      // Si TIGO no está disponible, verificar el fallback
+      fallbackHealthy = await llmChatService.checkBackendHealth();
+    }
+    
+    const isHealthy = tigoHealthy || fallbackHealthy;
     setBackendAvailable(isHealthy);
+    
     if (!isHealthy) {
-      console.warn('Backend no disponible, usando respuestas hardcoded');
+      console.warn('Backend TIGO y fallback no disponibles, usando respuestas hardcoded');
+    } else if (!tigoHealthy) {
+      console.warn('Backend TIGO no disponible, usando fallback LLM');
     }
   };
 
@@ -193,27 +207,98 @@ Mi hijo me dijo que viniera a preguntar sobre un plan nuevo... pero la verdad, y
   const generateDynamicResponse = async (userMessage: string): Promise<string> => {
     if (useLLM && backendAvailable) {
       try {
-        const response = await llmChatService.generateDynamicResponse({
+        // Crear persona sintética para el nuevo servicio TIGO con datos por defecto
+        const tigoPersona: SyntheticPersona = {
+          id: `persona-${archetype}`,
+          name: evaluationContext.persona_context.name,
+          archetype: archetype as any, // TigoArchetype
+          characteristics: {
+            demographics: {
+              age: evaluationContext.persona_context.age,
+              gender: 'male', // Default value since not available in persona_context
+              nse: 'C', // Default NSE
+              monthly_income: 12000, // Default income
+              education_level: 'Secundaria', // Default education
+              occupation: evaluationContext.persona_context.occupation,
+              family_status: 'Soltero', // Default family status
+              current_telecom_spend: 800 // Default telecom spend
+            },
+            location: {
+              city: evaluationContext.persona_context.city,
+              neighborhood: 'Centro', // Default neighborhood
+              region: 'Región Central' // Default region
+            },
+            psychographics: {
+              lifestyle: 'Vida normal', // Default lifestyle
+              values: ['Familia'], // Default values
+              motivations: ['Estabilidad'], // Default motivations
+              main_concerns: evaluationContext.concerns || ['Precio'],
+              price_sensitivity: 'Alta', // Default price sensitivity
+              tech_adoption: 'Básico', // Default tech adoption
+              preferred_channels: ['Punto de venta'] // Default channels
+            }
+          },
+          created_at: new Date(),
+          updated_at: new Date(),
+          created_by: 'system',
+          is_active: true
+        };
+
+        // Usar el nuevo servicio LLM de TIGO
+        const response = await tigoLLMService.generatePersonaResponse({
           userMessage,
-          archetype,
-          evaluationContext,
-          conceptDetails,
+          persona: tigoPersona,
+          productContext: {
+            campaign: conceptDetails?.name,
+            service: conceptDetails?.type === 'product' ? 'producto' : 'campaña',
+            telecom_context: 'tigo_honduras',
+            concept_type: conceptDetails?.type
+          },
           conversationHistory: messages.map(m => ({
             role: m.role,
             content: m.content,
             timestamp: m.timestamp
-          })),
-          creativity
+          }))
         });
 
-        if (response.success) {
+        if (response.response) {
+          // Actualizar contexto con insights del LLM
+          setConversationContext((prev: any) => ({
+            ...prev,
+            persona_insights: response.persona_insights,
+            confidence_score: response.confidence_score
+          }));
+          
           return response.response;
         } else {
-          console.warn('LLM falló, usando fallback:', response.error);
+          console.warn('Tigo LLM sin respuesta, usando fallback');
           return generateHardcodedResponse(userMessage);
         }
+        
       } catch (error) {
-        console.error('Error en respuesta dinámica:', error);
+        console.error('Error en Tigo LLM Service:', error);
+        // Fallback al servicio anterior como backup
+        try {
+          const fallbackResponse = await llmChatService.generateDynamicResponse({
+            userMessage,
+            archetype,
+            evaluationContext,
+            conceptDetails,
+            conversationHistory: messages.map(m => ({
+              role: m.role,
+              content: m.content,
+              timestamp: m.timestamp
+            })),
+            creativity
+          });
+
+          if (fallbackResponse.success) {
+            return fallbackResponse.response;
+          }
+        } catch (fallbackError) {
+          console.error('Error en fallback LLM:', fallbackError);
+        }
+        
         return generateHardcodedResponse(userMessage);
       }
     } else {
